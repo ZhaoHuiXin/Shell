@@ -1,0 +1,18 @@
+1.给vim起别名
+# echo "alias vi='vim'" >> /etc/profile
+# tail -1 /etc/profile
+# source /etc/profile
+
+2.幻数
+#!/bin/bash
+#!/bin/sh
+#!/usr/bin/env python
+注意：如果在脚本开头的第一行不指定解释器，就要用对应的解释器来执行脚本，如bash test.sh   python test.py
+
+3.查看系统的bash版本
+# bash --version
+
+4.特殊编辑方法
+$ cat > test.sh
+echo 'i am zhx'
+然后按ctrl + d 结束编辑
