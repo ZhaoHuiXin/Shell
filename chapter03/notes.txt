@@ -84,3 +84,46 @@ $USER: 当前用户
 17.无引号，赋值时如果变量内容中有空格，会造成赋值不完整。输出内容时，会将含有空格的字符串视为一个整体来输出。
     ``一般用于引用命令，执行的时候命令会被执行，相当于$()，赋值和输出都要用``将命令引起来。
     双引号：输出双引号内的所有内容；如果内容中有命令（要反引下）、变量、特殊转义等，会先把变量、命令、转义字符解析出来，然后输出最终内容，这为弱引用。
+
+18.awk获取shell变量，最好使用"'$**'" 的格式，对用单引号、双引号、反引号及不使用引号声明的变量均适用。
+	awk 'BEGIN {print "'$ETT'"}'
+19.更多的是先用echo加符号输出变量，然后通过管道传给awk，进而控制变量的输出结果。
+	ETT="oldgirl"
+	echo "$ETT" | awk '{print $0}'
+	awk中$0代表全部，1代表第一个单词的位置
+	# ETT=`date`
+	# echo $ETT
+	>> 2018年 06月 11日 星期一 08:54:21 CST
+	# echo $ETT|awk '{print $0}'
+	>> 2018年 06月 11日 星期一 08:54:21 CST
+	# echo $ETT|awk '{print $1}'
+	>> 2018年
+	# echo $ETT|awk '{print $2}'
+	>> 06月
+	# echo $ETT|awk '{print $3}'
+	>> 11日
+	# echo $ETT|awk '{print $0}'
+	>> 2018年 06月 11日 星期一 08:54:21 CST
+	# echo $ETT|awk '{print $4}'
+	>> 星期一
+	# echo $ETT|awk '{print $5}'
+	>> 08:54:21
+	# echo $ETT|awk '{print $6}'
+	>> CST
+	# echo $ETT|awk '{print $7}'
+
+20.通过sed指定变量关键字过滤
+	[root@momentsYun chapter03]# cat sed.log
+		testchars
+		oldboy
+	[root@momentsYun chapter03]# OLDBOY="testchars"
+	[root@momentsYun chapter03]# sed -n /"$OLDBOY"/p sed.log 
+		testchars
+	[root@momentsYun chapter03]# sed -n /$OLDBOY/p sed.log 
+		testchars
+	[root@momentsYun chapter03]# sed -n /'$OLDBOY'/p sed.log 
+	[root@momentsYun chapter03]# 
+	结论和grep一样,唯有awk特殊
+
+21.在打印输出和使用变量时，变量名前要接$符号；变量名后面紧接其他字符的时候，要用
+大括号将变量部分单独括起来，防止出现“金庸新著”的问题；在unset、export、(())等场景中使用但不打印变量时不加$，这个有些例外。
