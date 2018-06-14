@@ -1,0 +1,92 @@
+# Copyright @ Max Zhao
+1.[root]# ./p.sh max
+max
+[root]# ./p.sh max zhx
+max
+[root]# ./p.sh "max zhao"
+max zhao
+
+2.[root]# cat p.sh 
+echo $1 $2
+[root]# ./p.sh max zhao
+max zhao
+[root]# ./p.sh "max zhao"
+max zhao
+[root]# ./p.sh "max zhao" "cool boy"
+max zhao cool boy
+
+3.[root]# echo \${1..15} #<==利用大括号输出15个位置参数
+$1 $2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12 $13 $14 $15
+[root]# echo \${1..15} > n.sh #<==利用大括号输出15个位置参数并定向到文件n.sh里
+[root]# ls
+notes.txt  n.sh  p.sh
+[root]# cat n.sh 
+$1 $2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12 $13 $14 $15
+[root]# vim n.sh 
+[root]# cat n.sh 
+echo $1 $2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12 $13 $14 $15 #<==增加echo命令打印所有参数
+[root]# echo {a..z} #<==测试打印26个字母并以空格分隔
+a b c d e f g h i j k l m n o p q r s t u v w x y z
+[root]# sh n.sh {a..z} #<==传入26个字母，以空格分隔作为26个参数
+a b c d e f g h i a0 a1 a2 a3 a4 a5 #<==位置参数大于9后，输出的内容就不对了
+[root]# vim n.sh 
+[root]# cat n.sh #<==当位置参数数字大于9时，需要用大括号将数字括起来
+echo $1 $2 $3 $4 $5 $6 $7 $8 $9 ${10} ${11} ${12} ${13} ${14} ${15}
+[root]# sh n.sh {a..z}
+a b c d e f g h i j k l m n o
+
+4.[root]# cat s0.sh 
+echo $0
+[root]# sh s0.sh #<== $0作用是取出脚本的名称（包括路径）；若不带路径执行脚本，输出结果就是脚本名字 
+s0.sh
+[root]# pwd
+/root/Shell/chapter04
+[root]# sh /root/Shell/chapter04/s0.sh #<==使用全路径执行脚本，结果就是全路径加脚本名字 
+/root/Shell/chapter04/s0.sh
+[root]# dirname /root/Shell/chapter04/s0.sh #<==dirname 命令作用是获取脚路径 
+/root/Shell/chapter04
+[root]# basename /root/Shell/chapter04/s0.sh #<==basename 命令作用是获取脚本名
+s0.sh
+
+5.[root]# cat ns.sh #<== 利用$0和dirname、basename分别取出脚本名和脚本路径 
+dirname $0
+basename $0
+[root]# pwd
+/root/Shell/chapter04
+[root]# sh /root/Shell/chapter04/ns.sh 
+/root/Shell/chapter04
+ns.sh
+
+6.$# 特殊变量获取脚本传参个数
+[root]# cat q.sh 
+echo $1 $2 $3 $4 $5 $6 $7 $8 $9
+echo $#
+[root]# sh q.sh {a..z}
+a b c d e f g h i #<==只接收了9个变量，所以打印9个字符
+26 #<==传入26个字符作为26个参数，因此这里打印26
+
+7.判断传参个数的脚本案例(条件表达式判断语句的写法)：
+[root]# cat t1.sh 
+[ $# -ne 2 ] && {     #<==如果用户传入参数个不等于2
+	echo "please input two args" #<==提示正确用法
+	exit 1    #<==由于不符合条件，退出脚本，返回值为 1
+}
+echo "Hell! MaxZhao" #<==满足传参个数的条件后能走到这里，打印问候语
+[root]# sh t1.sh 
+please input two args
+[root]# sh t1.sh arg1 arg2
+Hell! MaxZhao
+
+8.判断传参个数的脚本案例(if判断语句的写法)：
+[root]# cat t2.sh 
+if [ $# -ne 2 ] #<==如果执行传参个数不等于2
+	then
+	  echo "USAGE:/bin/sh $0 arg1 arg2" #<==给用户提示正确用法，$0打印脚本名字及路径
+	  exit 1  #<==如果不满足要求，退出脚本，返回值为1
+fi
+echo $1 $2  #<==若参数满足要求，则打印$1和$2获取到的传参的字符串
+[root]# sh t2.sh 
+USAGE:/bin/sh t2.sh arg1 arg2
+[root]# sh t2.sh "Hello" "Max"
+Hello Max
+
