@@ -90,3 +90,67 @@ USAGE:/bin/sh t2.sh arg1 arg2
 [root]# sh t2.sh "Hello" "Max"
 Hello Max
 
+9.$* 和 $@ 特殊变量功能及区别说明
+[root]# set -- "I am" Max Zhao #<==通过set设置三个字符串参数，“--”表示清除所有参数变量，重新设置后面的参数变量
+[root]# echo $#  #<==输出参数个数
+3
+[root]# echo $1
+I am
+[root]# echo $2
+Max
+[root]# echo $3
+Zhao
+[root]# echo $*  #<==打印$*，不带双引号
+I am Max Zhao
+[root]# echo $@  #<==打印$@，不带双引号
+I am Max Zhao
+[root]# for i in $*;do echo $i;done  #<==遍历$*不加双引号，输出所有参数，"I am"也被拆开输出了
+I
+am
+Max
+Zhao
+[root]# for i in $@;do echo $i;done  #<==遍历$@不加双引号，结果同上
+I
+am
+Max
+Zhao
+[root]# for i in "$*";do echo $i;done  #<==遍历"$*"带双引号，将所有参数当做一个参数输出了
+I am Max Zhao
+[root]# for i in "$@";do echo $i;done  #<==遍历"$@"带双引号，会以独立的形式输出每个参数，符合传参需求
+I am
+Max
+Zhao
+[root]# for i;do echo $i;done  #<==去掉in 变量列表，相当于有双引号的 in "$@"
+I am
+Max
+Zhao
+[root]# shift  #<==用 shift 将参数左移一位
+[root]# echo $#
+2
+[root]# echo $1  #<==这里打印原来$2的值了
+Max
+[root]# echo $2
+Zhao
+[root]# echo $3  #<==$3的值没了
+
+[root]# echo $0
+-bash
+
+10.$?特殊变量功能
+[root]# pwd
+/root/Shell/chapter04
+[root]# echo $?  #<== $?为0说明上一个命令的执行是成功的
+0
+[root]# ls /root
+Shell
+[root]# echo $?
+0
+[root]# ls /unexists
+ls: 无法访问/unexists: 没有那个文件或目录
+[root]# echo $?  #<== $?非0，说明上一个命令执行错误，对于不同的错误返回值不同
+2
+[root]# unexistsorder
+-bash: unexistsorder: 未找到命令
+[root]# echo $?  #<== $? 非0说明上一个命令执行错误
+127
+
