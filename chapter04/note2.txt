@@ -53,4 +53,44 @@ Max@Zhao~$ #<== 执行完 date 直接把我踢出阿里云shell了。
 
     当使用exec打开文件后，read命令每次都会将文件指针移动到文件的下一行进行读取，直到文件末尾，利用这个可以实现
 处理文件内容。
+	[root]# seq 5 >/tmp/tmp.log 
+	[root]# cat /tmp/tmp.log 
+	1
+	2
+	3
+	4
+	5
+	[root]# cat exec.sh 
+	exec </tmp/tmp.log  #<==读取log内容
+	while read line  #<==利用read一行行读取处理
+	do
+	    echo $line  #<== 打印输出
+	done
+	echo ok
+	[root]# sh exec.sh 
+	1
+	2
+	3
+	4
+	5
+	ok
+
+4.read
+命令格式：read变量名表
+功能：从标准输入读取字符串等信息，传给Shell程序内部定义的变量
+
+5.shift
+命令格式：shift-Shift positional parameters
+功能：shift语句会按如下方式重新命名所有的位置参数变量，即$2成为$1、$3成为$2等，以此类推，在程序中每使用一次shift
+语句，都会使所有的位置参数依次向左移动一个位置，并使位置参数$#减1，直到减到0为止。
+[root]# cat shift.sh
+echo $1 $2
+if [ $# -eq 2 ];then
+	shift
+	echo $1
+fi
+
+[root]# sh shift.sh 1 2
+1 2 #<==这里是echo $1 $2的结果
+2   #<==这里是echo $1 的结果，课件shift使参数左移了一位
 
