@@ -94,3 +94,21 @@ fi
 1 2 #<==这里是echo $1 $2的结果
 2   #<==这里是echo $1 的结果，课件shift使参数左移了一位
 
+6.获取变量长度：
+[root]# MAX="zhao hui xin"
+[root]# echo ${MAX}
+zhao hui xin
+[root]# echo ${#MAX}
+12
+[root]# expr length "${MAX}"
+12
+[root]# expr length "$MAX"
+12
+[root]# echo $MAX|wc -L
+12
+[root]# echo "$MAX"|awk '{print length($0)}'
+12
+在以上获取变量长度方法中，${#parameter}是最快的，一般调用外部命令处理的方式与使用内置操作的速度相差较大，
+在shell编程中尽量使用内置操作或函数完成。
+
+
