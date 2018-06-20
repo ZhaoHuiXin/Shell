@@ -1,0 +1,56 @@
+bash shell 常用内置命令:
+1.echo 在屏幕上输出信息
+命令格式：echo args #<==可以是字符串和变量的组合。
+功能说明：将echo命令后面args指定的字符串及变量等显示到标准输出。
+其常用参数：
+-n：不换行输出内容
+-e：解析转义字符（如下）
+转义字符：\n换行；\r回车；\t制表符(tab)；\b退格；\v纵向制表符
+
+[root]# echo Max; echo Zhaohuixin
+Max
+Zhaohuixin
+[root]# echo -n Max; echo Zhaohuixin  #<== -n不换行输出
+MaxZhaohuixin
+[root]# echo "Max\tMax\nMax\tMax"
+Max\tMax\nMax\tMax
+[root]# echo -e "Max\tMax\nMax\tMax"  #<== -e解析以“\”开头的字符
+Max	Max  #<==Max之间空隙是\t作用。遇到\n后开启新的一行
+Max	Max
+[root]# printf "Max\tMax\nMax\tMax"  #<==printf的转义字符功能与echo类似
+Max	Max
+Max	Max[root]# 
+[root]# echo -e "1\b23"  #<== -e解析了“\b”，退格
+23
+[root]# printf  "1\b23"
+23[root]# 1
+
+2.eval
+命令格式：eval args
+功能：当Shell程序执行到eval语句时，Shell读入参数args，并将它们组合成一个新的命令，然后执行。
+范例：
+
+[root]# cat noeval.sh 
+echo \$$#  #<== $#表示传参个数
+[root]# sh noeval.sh arg1 arg2 
+$2
+#<==传入2个参数，因此$#为2，于是 \$$# 就变成了echo $2，最后输出$2，并没有打印arg2.
+
+[root]# cat eval.sh 
+eval "echo \$$#"  #<== $#表示传参个数
+[root]# sh eval.sh arg1 arg2
+arg2
+#<== 加上eval命令，使得打印的特殊位置参数，重新解析输出，而不是输出$2本身。
+
+3.exec
+命令格式：exec命令参数
+功能：exec命令能够在不创建新的子进程的前提下，转去执行指定的命令，当指定的命令执行完毕后，该进程（也就是最初
+的Shell）就终止了，示例如下：
+[root]# exec date
+2018年 06月 20日 星期三 09:18:48 CST
+Connection to 47.94.12.241 closed.
+Max@Zhao~$ #<== 执行完 date 直接把我踢出阿里云shell了。
+
+    当使用exec打开文件后，read命令每次都会将文件指针移动到文件的下一行进行读取，直到文件末尾，利用这个可以实现
+处理文件内容。
+
