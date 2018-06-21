@@ -98,17 +98,113 @@ fi
 [root]# MAX="zhao hui xin"
 [root]# echo ${MAX}
 zhao hui xin
-[root]# echo ${#MAX}
+[root]# echo ${#MAX} #<==变量自带获取长度方法
 12
-[root]# expr length "${MAX}"
+[root]# expr length "${MAX}" #<==利用expr自带的length方法
 12
 [root]# expr length "$MAX"
 12
-[root]# echo $MAX|wc -L
+[root]# echo $MAX|wc -L  #<==利用管道加wc的方法
 12
-[root]# echo "$MAX"|awk '{print length($0)}'
+[root]# echo "$MAX"|awk '{print length($0)}'  #<==利用awk自带的length函数方法
 12
 在以上获取变量长度方法中，${#parameter}是最快的，一般调用外部命令处理的方式与使用内置操作的速度相差较大，
 在shell编程中尽量使用内置操作或函数完成。
 
+7.一道面试题
+[root]# chars="I am oldboy linux welcome to our training"
+[root]# for w in $chars;
+> do
+> if [ ${#w} -lt 6 ]
+> then
+> echo ${w}
+> fi
+> done
+I
+am
+linux
+to
+our
+
+8.截取变量内容
+[root]# vi note2.txt 
+[root]# Max="zhao hui xin"
+[root]# echo ${Max}
+zhao hui xin
+[root]# echo ${Max:2}  #<==从第二个字符之后开始截取，第二个字符不包含在内
+ao hui xin
+[root]# echo ${Max:2:4}  #<==从第二个字符后开始截取，截取2个字符
+ao h
+
+8.从头开始匹配删除
+[root]# TEST=abcABC123ABCabc
+[root]# echo ${TEST}
+abcABC123ABCabc
+[root]# echo ${TEST#a*c} #<==从头开始匹配最短的a*c，将其删除
+ABC123ABCabc
+[root]# echo ${TEST#a*C}
+123ABCabc
+[root]# echo ${TEST# a*C} #<==从头开始陪陪" a*c"，无果
+abcABC123ABCabc
+[root]# echo ${TEST# a*C}
+abcABC123ABCabc
+[root]# echo ${TEST## a*C}
+abcABC123ABCabc
+[root]# echo ${TEST##a*C} #<==从头开始匹配最长a*C,将其删除
+abc
+[root]# echo ${TEST##a*c}  #<==从头开始匹配最长a*c，这里是从头到尾，删没了
+
+[root]# echo ${TEST%a*C}  #<==从尾部开始匹配最短a*C，无果
+abcABC123ABCabc
+[root]# echo ${TEST%c*a}
+abcABC123ABCabc
+[root]# echo ${TEST%a*c}
+abcABC123ABC
+[root]# echo ${TEST%%a*C}
+abcABC123ABCabc
+[root]# echo ${TEST%%a*c}  #<==从尾匹配最长a*c，匹配完了
+
+
+9.变量中字符串替换
+
+[root]# echo ${TEST}
+abcABC123ABCabc
+[root]# echo ${TEST/abc/def} #<==一个“/”表示替换匹配的第一个字符串
+defABC123ABCabc
+[root]# echo ${TEST//abc/def}  #<==两个“/”表示替换匹配的所有字符串
+defABC123ABCdef
+[root]# echo ${TEST}
+abcABC123ABCabc
+
+10.利用字符串替换批量重名名
+[root]# for i in {1..15};do echo $i;done
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+[root]# for i in {1..15};do touch stu_102999_${i}.jpg;done
+[root]# ls
+bash_helper.txt  n.sh    shift.sh           stu_102999_15.jpg  stu_102999_6.jpg  t3.sh
+eval.sh          ns.sh   stu_102999_10.jpg  stu_102999_1.jpg   stu_102999_7.jpg  test_pid.sh
+exec.sh          pid.sh  stu_102999_11.jpg  stu_102999_2.jpg   stu_102999_8.jpg
+noeval.sh        p.sh    stu_102999_12.jpg  stu_102999_3.jpg   stu_102999_9.jpg
+note1.txt        q.sh    stu_102999_13.jpg  stu_102999_4.jpg   t1.sh
+note2.txt        s0.sh   stu_102999_14.jpg  stu_102999_5.jpg   t2.sh
+[root]# for f in `ls *.jpg`;do mv $f `echo ${f//.jpg/_finished.jpg}`;done
+[root]# ls *.jpg
+stu_102999_10_finished.jpg  stu_102999_14_finished.jpg  stu_102999_3_finished.jpg  stu_102999_7_finished.jpg
+stu_102999_11_finished.jpg  stu_102999_15_finished.jpg  stu_102999_4_finished.jpg  stu_102999_8_finished.jpg
+stu_102999_12_finished.jpg  stu_102999_1_finished.jpg   stu_102999_5_finished.jpg  stu_102999_9_finished.jpg
+stu_102999_13_finished.jpg  stu_102999_2_finished.jpg   stu_102999_6_finished.jpg
 
