@@ -100,4 +100,11 @@ word
 [root]# echo $result
 word
 
+5.生产案例
+[root]# cat del.sh
+#<== 删除7天前的过期数据备份
+find ${path-/tmp} -name "*.tar.gz" -type f -mtime +7|xargs rm -f
 
+[root]# sh -x del.sh
++ find /tmp -name '*.tar.gz' -type f -mtime +7
++ xargs rm -f
