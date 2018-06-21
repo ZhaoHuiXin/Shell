@@ -1,0 +1,103 @@
+Shell特殊扩展变量的实践
+1.${parameter:-word}
+作用：如果parameter变量值为“空或未赋值”，则返回word字符串替代变量的值
+[root]# echo $test #<==变量未设置，所以输出时为空
+
+[root]# result=${test:-UNSET}  #<==若test无值，则返回UNSET
+[root]# echo $result
+UNSET
+[root]# echo ${test}  #<==注意，此时打印test变量还是为空
+#<====================================================
+root]# test=  #<==给test设置空值
+[root]# echo $test
+
+[root]# result=${test-UNSET} #<==当定义时不使用:，只在“变量未赋值”时起作用
+[root]# echo ${result}  #<==打印结果是空值，因为变量赋值为空
+
+[root]# result=${test:-UNSET}  #<==当定义时使用了“:”，那么再“变量为空或未赋值”时都起作用
+[root]# echo ${result}  #<==打印了替代值“UNSET”
+UNSET
+#<======================================================
+[root]# test=MAX  #<==当给变量赋值了并且不是空值，那么使不使用“：”结果是一样的
+[root]# echo $test
+MAX
+[root]# result=${test:-UNSET}
+[root]# echo ${result}
+MAX
+[root]# result=${test-UNSET}
+[root]# echo ${result}
+MAX
+
+2.${parameter:=word}
+作用：如果parameter变量值为“空或未赋值”，就设置这个变量值未word，并返回其值。位置变量和特殊变量不适用。
+[root]# unset result  #<==清空result值
+[root]# echo $result
+
+[root]# echo $test
+MAX
+[root]# unset test  #<==清空test值
+[root]# echo $test
+
+[root]# result=${test:=UNSET}  #<==设置result的值为test，如果test为空或未赋值，那么将UNSET赋值给test
+[root]# echo $result
+UNSET
+[root]# echo ${test}  #<==test被赋值未UNSET
+UNSET
+#<=========================================================
+[root]# result=${test=UNSET}  #<==此时test值为UNSET，所以不会被再次赋值,使不使用“：”结果一样
+[root]# echo $result
+UNSET
+[root]# echo $test
+UNSET
+#<==========================================================
+[root]# unset test  #<==清空test的值
+[root]# echo $test
+
+[root]# test=  #<==给test赋值为空
+[root]# echo $test
+
+[root]# result=${test=UNSET}  #<==此时不使用“：”进行操作，只在test未赋值时起作用
+[root]# echo ${result}  #<==可见result没有采用默认值，而是使用了test的空值
+
+[root]# echo $test  #<==由于没有使用“：”，只在test未赋值时起作用，test仍为空值
+
+3.${parameter:?word}
+作用：如果parameter变量值为空或未赋值，那么word字符串将被作为标准错误输出，否则输出变量的值。
+[root]# echo ${key:?not defined it}  #<==如果key为空或未赋值则将not defined it作为标准错误输出
+-bash: key: not defined it
+[root]# echo ${key?not defined it}
+-bash: key: not defined it
+[root]# key=1
+[root]# echo ${key:?not defined it}  #<==如果key有值则输出key
+1
+[root]# echo ${key?not defined it}  #<==不带“：”只在key未赋值时起作用，key有值输出key值
+1
+#<=======================================================================
+[root]# unset key  #<==清空key值
+[root]# key=  #<==给key赋值为空
+[root]# echo ${key:?not defined it}  #<==当使用“：”时起了作用，将not defined it作为标准错误输出
+-bash: key: not defined it
+[root]# echo ${key?not defined it}  #<==当没使用“：”时，仍然输出key的空值
+
+4.${parameter:+word}
+作用：如果parameter变量值为空或未赋值，则什么都不做，否则word字符串将替代变量的值。
+
+[root]# unset result
+[root]# unset test
+[root]# 
+[root]# result=${test:+word}  #<==test未赋值，那么什么都不做
+[root]# echo $result
+
+[root]# test=19  #<==test有值并且不为空，则替换test的值
+[root]# result=${test:+word}
+[root]# echo $result
+word
+[root]# test=  #<==test值为空，则什么都不做
+[root]# result=${test:+word}
+[root]# echo $result
+
+[root]# result=${test+word}  #<==test值为空，不带“：”只在test未赋值时起作用，所以不会什么都不做，而是替换test值为word
+[root]# echo $result
+word
+
+
