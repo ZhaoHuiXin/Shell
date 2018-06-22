@@ -1,0 +1,35 @@
+1.给vim起别名
+# echo "alias vi='vim'" >> /etc/profile
+# tail -1 /etc/profile
+# source /etc/profile
+
+2.幻数
+#!/bin/bash
+#!/bin/sh
+#!/usr/bin/env python
+注意：如果在脚本开头的第一行不指定解释器，就要用对应的解释器来执行脚本
+，如bash test.sh   python test.py
+
+3.查看系统的bash版本
+# bash --version
+
+4.特殊编辑方法
+$ cat > test.sh
+echo 'i am zhx'
+然后按ctrl + d 结束编辑
+
+5.基本规范
+    脚本第一行指定脚本解释器
+    脚本开头添加版本、版权等信息
+    脚本中尽量不使用中文
+    脚本应以.sh为扩展名
+    脚本应放在固定路径下
+6.良好习惯
+    成对符号一次性写出
+    中括号两端至少有1个空格
+    流程控制语句一次性将格式写完
+    通过缩进让代码更易读
+    常规变量的字符串定义变量值应加双引号并且等号前后不能有空格
+    强引用（所见即所得）用单引号
+    命令的引用，用反引号
+    所有符号均应是英文状态下的符号

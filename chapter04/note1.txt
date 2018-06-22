@@ -41,7 +41,8 @@ echo $0
 s0.sh
 [root]# pwd
 /root/Shell/chapter04
-[root]# sh /root/Shell/chapter04/s0.sh #<==使用全路径执行脚本，结果就是全路径加脚本名字 
+[root]# sh /root/Shell/chapter04/s0.sh #<==使用全路径执行脚本，结果就是全路径加
+脚本名字 
 /root/Shell/chapter04/s0.sh
 [root]# dirname /root/Shell/chapter04/s0.sh #<==dirname 命令作用是获取脚路径 
 /root/Shell/chapter04
@@ -81,7 +82,8 @@ Hello! MaxZhao
 [root]# cat t2.sh 
 if [ $# -ne 2 ] #<==如果执行传参个数不等于2
 	then
-	  echo "USAGE:/bin/sh $0 arg1 arg2" #<==给用户提示正确用法，$0打印脚本名字及路径
+	  echo "USAGE:/bin/sh $0 arg1 arg2" #<==给用户提示正确用法，$0打印脚本名
+字及路径
 	  exit 1  #<==如果不满足要求，退出脚本，返回值为1
 fi
 echo $1 $2  #<==若参数满足要求，则打印$1和$2获取到的传参的字符串
@@ -91,7 +93,8 @@ USAGE:/bin/sh t2.sh arg1 arg2
 Hello Max
 
 9.$* 和 $@ 特殊变量功能及区别说明
-[root]# set -- "I am" Max Zhao #<==通过set设置三个字符串参数，“--”表示清除所有参数变量，重新设置后面的参数变量
+[root]# set -- "I am" Max Zhao #<==通过set设置三个字符串参数，“--”表示清除所有参
+数变量，重新设置后面的参数变量
 [root]# echo $#  #<==输出参数个数
 3
 [root]# echo $1
@@ -104,7 +107,8 @@ Zhao
 I am Max Zhao
 [root]# echo $@  #<==打印$@，不带双引号
 I am Max Zhao
-[root]# for i in $*;do echo $i;done  #<==遍历$*不加双引号，输出所有参数，"I am"也被拆开输出了
+[root]# for i in $*;do echo $i;done  #<==遍历$*不加双引号，输出所有参数，"I am"
+也被拆开输出了
 I
 am
 Max
@@ -114,9 +118,11 @@ I
 am
 Max
 Zhao
-[root]# for i in "$*";do echo $i;done  #<==遍历"$*"带双引号，将所有参数当做一个参数输出了
+[root]# for i in "$*";do echo $i;done  #<==遍历"$*"带双引号，将所有参数当做一个
+参数输出了
 I am Max Zhao
-[root]# for i in "$@";do echo $i;done  #<==遍历"$@"带双引号，会以独立的形式输出每个参数，符合传参需求
+[root]# for i in "$@";do echo $i;done  #<==遍历"$@"带双引号，会以独立的形式输出
+每个参数，符合传参需求
 I am
 Max
 Zhao
@@ -154,13 +160,14 @@ ls: 无法访问/unexists: 没有那个文件或目录
 [root]# echo $?  #<== $? 非0说明上一个命令执行错误
 127
 工作场景中，常用的就是0代表成功，非0代表运行失败；比如使用$?判断源码安装是否成功
-当对服务器的数据进行备份时，我们会在执行完关键命令，如tar或cp后，通过获取返回值拉力判断命令是否成功，
-备份数据是否完整。
+当对服务器的数据进行备份时，我们会在执行完关键命令，如tar或cp后，通过获取返回值
+拉力判断命令是否成功，备份数据是否完整。
 
 11.[root]# cat t3.sh 
 [ $# -ne 2 ] && {
 echo "must be two args."  #<==若参数不等于2，则输出提示
-exit 119  #<==终止程序运行并以指定的119状态值退出程序，赋值给当前Shell的 "$?" 变量
+exit 119  #<==终止程序运行并以指定的119状态值退出程序，赋值给当前Shell的 "$?" 变
+量
 }
 echo "hello! Max Zhao"
 [root]# sh t3.sh 
@@ -185,7 +192,8 @@ sleep 300  #<==休息300秒，模拟守护进程不退出
 [root]# sh test_pid.sh &  #<==在后台运行脚本，&符号表示再后台运行
 [1] 11582		  #<==这是脚本的进程号
 [root]# ps -ef|grep test_pid|grep -v grep
-root     11582 11488  0 08:29 pts/1    00:00:00 sh test_pid.sh  #<==获取脚本的进程号
+root     11582 11488  0 08:29 pts/1    00:00:00 sh test_pid.sh  #<==获取脚本的进
+程号
 [root]# cat /tmp/a.pid 
 11582  #<==这是$$对应的值，$$就是获取当前执行的Shell脚本的进程号
 

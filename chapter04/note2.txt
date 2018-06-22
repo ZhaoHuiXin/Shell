@@ -27,7 +27,8 @@ Max	Max[root]#
 
 2.eval
 命令格式：eval args
-功能：当Shell程序执行到eval语句时，Shell读入参数args，并将它们组合成一个新的命令，然后执行。
+功能：当Shell程序执行到eval语句时，Shell读入参数args，并将它们组合成一个新的
+命令，然后执行。
 范例：
 
 [root]# cat noeval.sh 
@@ -44,15 +45,15 @@ arg2
 
 3.exec
 命令格式：exec命令参数
-功能：exec命令能够在不创建新的子进程的前提下，转去执行指定的命令，当指定的命令执行完毕后，该进程（也就是最初
-的Shell）就终止了，示例如下：
+功能：exec命令能够在不创建新的子进程的前提下，转去执行指定的命令，当指定的命令
+执行完毕后，该进程（也就是最初的Shell）就终止了，示例如下：
 [root]# exec date
 2018年 06月 20日 星期三 09:18:48 CST
 Connection to 47.94.12.241 closed.
 Max@Zhao~$ #<== 执行完 date 直接把我踢出阿里云shell了。
 
-    当使用exec打开文件后，read命令每次都会将文件指针移动到文件的下一行进行读取，直到文件末尾，利用这个可以实现
-处理文件内容。
+    当使用exec打开文件后，read命令每次都会将文件指针移动到文件的下一行进行读取
+，直到文件末尾，利用这个可以实现处理文件内容。
 	[root]# seq 5 >/tmp/tmp.log 
 	[root]# cat /tmp/tmp.log 
 	1
@@ -81,7 +82,8 @@ Max@Zhao~$ #<== 执行完 date 直接把我踢出阿里云shell了。
 
 5.shift
 命令格式：shift-Shift positional parameters
-功能：shift语句会按如下方式重新命名所有的位置参数变量，即$2成为$1、$3成为$2等，以此类推，在程序中每使用一次shift
+功能：shift语句会按如下方式重新命名所有的位置参数变量，即$2成为$1、$3成为$2等，
+以此类推，在程序中每使用一次shift
 语句，都会使所有的位置参数依次向左移动一个位置，并使位置参数$#减1，直到减到0为止。
 [root]# cat shift.sh
 echo $1 $2
@@ -108,8 +110,8 @@ zhao hui xin
 12
 [root]# echo "$MAX"|awk '{print length($0)}'  #<==利用awk自带的length函数方法
 12
-在以上获取变量长度方法中，${#parameter}是最快的，一般调用外部命令处理的方式与使用内置操作的速度相差较大，
-在shell编程中尽量使用内置操作或函数完成。
+在以上获取变量长度方法中，${#parameter}是最快的，一般调用外部命令处理的方式与使
+用内置操作的速度相差较大，在shell编程中尽量使用内置操作或函数完成。
 
 7.一道面试题
 [root]# chars="I am oldboy linux welcome to our training"

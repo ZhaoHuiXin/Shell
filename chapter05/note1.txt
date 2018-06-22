@@ -45,4 +45,114 @@
 > echo yes
 > fi
 yes
-上面涉及的数字及彼岸连个必须为整数（整型），不能是小数(浮点数)或字符串。
+上面涉及的数字及彼岸连个必须为整数（整型），不能是小数(浮点数)或字符串。bc命令和
+awk命令可以用于进行小数运算，但一般用到的较少。
+#<==========================变量前后使用++和--特殊运算符的表达式=============
+[root]# echo $((a++))
+0
+[root]# a=10  #<==给a赋起始值10
+[root]# echo $((a++))  #<==变量再运算符之前，输出表达式的值为a，然后a自增或自减
+10
+[root]# echo $a  #<==自增后的a
+11
+[root]# echo $((a--))
+11
+[root]# echo $a
+10
+[root]# echo $a
+10
+[root]# echo $((--a)) #<==先自增或自减，表达式的值就是运算后的a的值。
+9
+[root]# echo $a
+9
+[root]# echo $((++a))
+10
+[root]# echo $a
+10
+#<====================通过“(())”运算后赋值给变量==============================
+[root]# myvar=99
+[root]# echo $((myvar+1)) #<=="(())"中的变量myvar可以加$也可以不加
+100
+[root]# echo $((  myvar + 1  )) #<==有没有空格无所谓
+100
+[root]# myvar=$((myvar+1)) #<==可以在“(())”表达式前加$号，将表达式赋值给变量
+[root]# echo $myvar
+100
+注：在“(())”中使用变量时可以去掉变量前的$符号。
+#<====================包含“(())”的各种常见运算符命令行的执行示例==============
+
+[root]# echo $((6+2))
+8
+[root]# echo $((6-2))
+4
+[root]# echo $((6*2))
+12
+[root]# echo $((6/2))
+3
+[root]# echo $((6%2))
+0
+[root]# echo $((6**2))
+36
+提示：“(())”表达式在命令执行时不需要加$符号，直接使用((6%2))即可，但是如果需要输
+出，就要加$符，例如：echo $((6%2))
+“(())”里的所有字符之间都没有空格，有一个或多个空格都不会影响结果。
+#<===================各种“(())”运算的shell脚本示例============================
+一：
+[root]# cat test.sh 
+#!/bin/bash
+a=6  #<==在脚本中定义两个变量并分别赋值
+b=2
+echo "a-b=$(($a-$b))" #<==对定义的变量进行各种符号运算，并通过表达式的形式输出
+echo "a+b=$(($a+$b))"
+echo "a*b=$(($a*$b))"
+echo "a/b=$(($a/$b))"
+echo "a**b=$(($a**$b))"
+echo "a%b=$(($a%$b))"
+[root]# sh test.sh 
+a-b=4
+a+b=8
+a*b=12
+a/b=3
+a**b=36
+a%b=0
+二：
+[root]# cat test.sh 
+#!/bin/bash
+a=$1  #<==在脚本中定义两个变量并分别赋值
+b=$2
+echo "a-b=$(($a-$b))" #<==对定义的变量进行各种符号运算，并通过表达式的形式输出
+echo "a+b=$(($a+$b))"
+echo "a*b=$(($a*$b))"
+echo "a/b=$(($a/$b))"
+echo "a**b=$(($a**$b))"
+echo "a%b=$(($a%$b))"
+[root]# sh test.sh 6 2
+a-b=4
+a+b=8
+a*b=12
+a/b=3
+a**b=36
+a%b=0
+#<=======================实现输入2个数进行四则运算的计算器====================
+[root]# cat jsq1.sh 
+#!/bin/bash/
+print_usage(){  #<==定义一个函数名为print_usage
+    printf "Please enter an interger\n"  #<==打印符合脚本要求的提示信息
+    exit 1  #<==以返回值1退出脚本，标准输出到控制台
+}
+read -p "Please input first number: " firstnum  #<==读入第一个数字
+if [ -n "`echo $firstnum|sed 's/[0-9]//g'`" ];then
+#<== 判断是否为整数，删除读入内容的数字部分看是否为空(-n)
+    print_usage
+fi
+read -p "Please input the operators: " operators  #<==读入运算符
+if [ "${operators}" != "+" ]&&[ "${operators}" != "-" ]&&[ "${operators}" != "*" ]&&[ "${operators}" != "/" ];then #<==判断运算符的合理性
+    echo "Please use (+|-|*|/)"
+    exit 2 #<==不符合要求，返回值为2退出脚本，表示出现了错误
+fi
+read -p "Please input second number: " secondnum  #<==读入第二个要运算的数字
+if [ -n "`echo $secondnum|sed 's/[0-9]//g'`" ];then
+    print_usage
+fi
+echo "${firstnum}${operators}${secondnum}=$((${firstnum}${operators}${secondnum}))"
+
