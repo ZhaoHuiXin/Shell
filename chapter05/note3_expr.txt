@@ -1,0 +1,193 @@
+expr既可以用于整数运算，也可以用于关于字符串长度、匹配等的运算处理
+1.expr用于计算
+[root]# expr 2 + 2
+4
+[root]# expr 2 - 2
+0
+[root]# expr 2 * 2
+expr: 语法错误
+[root]# expr 2 \* 2
+4
+[root]# expr 2 / 2
+1
+要注意，使用expr时：
+运算符及用于计算的数字左右都至少有一个空格，否则会报错。
+使用乘号时，必须用反斜线屏蔽其特定含义，因为shell可能会误解*的含义
+
+2.expr配合变量计算
+[root]# i=5
+[root]# i=`expr $i + 6` # 注意用反引号引起来，变量和数字符号两边要有空格
+[root]# echo $i
+11
+
+3.利用expr计算变量或字符串必须是整数的规则，判断是否为整数
+[root]# i=5 #<==赋值一个整数5给i
+[root]# expr $i + 6 &>/dev/null #<==把i和整数相加，不保留任何输出
+[root]# echo $?  #<==输出返回值，为0表示成功
+0
+[root]# i=old
+[root]# expr $i + 6 &>/dev/null 
+[root]# echo $?  #<==输出返回值，不为0表示失败，说明i不是整数
+2
+结论：用expr做计算，将一个未知量和一个已知整数相加，看返回值是否为0来判断未知
+量是否为整数。
+
+4.案例：
+[root]# cat 05_16_expr.sh 
+#!/bin/sh
+expr $1 + 1 >/dev/null 2>&1
+[ $? -eq 0 ]&&echo int || echo chars #<==这是一个条件表达式语法，返回值为0输出int，否则输出chars
+
+[root]# sh 05_16_expr.sh Max
+chars
+[root]# sh 05_16_expr.sh 911
+int
+
+5.案例：
+[root]# cat judge_int.sh 
+#!/bin/sh
+#<==通过reaad读入持续等待输入的例子
+while true 
+do
+    read -p "Pls input: " a
+    expr $a + 0 >/dev/null 2>&1
+    [ $? -eq 0 ] && echo int || echo chars
+done
+
+[root]# sh judge_int.sh 
+Pls input: Max
+chars
+Pls input: 911
+int
+Pls input: 119
+int
+
+6.案例，对传入参数个数及是否为整数进行判断
+
+ot]# cat 05_18_1.sh 
+#!/bin/sh
+#no.1
+[ $# -ne 2 ] &&{
+    echo $"USAGE $0 NUM1 NUM2"
+    exit 1
+}
+#no.2
+a=$1
+b=$2
+expr $a + $b + 100 &>/dev/null
+if [ $? -ne 0 ]
+    then 
+        echo "you must input two nums"
+        exit 2
+fi
+#no.3
+echo "a-b=$(($a-$b))"
+echo "a+b=$(($a+$b))"
+[root]# sh 05_18_1.sh 
+USAGE 05_18_1.sh NUM1 NUM2
+[root]# sh 05_18_1.sh 1 2]
+you must input two nums
+[root]# sh 05_18_1.sh 1 2
+a-b=-1
+a+b=3
+
+
+7.案例，功能同上
+
+ot]# cat 05_18_2.sh 
+#!/bin/sh
+#no.1
+[ $# -ne 2 ]&&{
+    echo "USAGE $0 NUM1 NUM2"
+    exit 1
+}
+#no.2
+a=$1
+b=$2
+expr $a + 1 &>/dev/null
+RETVAL_A=$?
+expr $b + 1 &>/dev/null
+RETVAL_B=$?
+if [ $RETVAL_A -ne 0 -o $RETVAL_B -ne 0 ]
+    then 
+        echo "you must input two int"
+        exit 2
+fi
+echo "a+b=$(($a+$b))"
+echo "a-b=$(($a-$b))"
+[root]# sh 05_18_2.sh 
+USAGE 05_18_2.sh NUM1 NUM2
+[root]# sh 05_18_2.sh 1 2
+a+b=3
+a-b=-1
+[root]# sh 05_18_2.sh 1 Max
+you must input two int
+
+8.使用expr match 功能进行整数判断：
+[root]# cat expr_match.sh 
+#!/bin/sh
+if [[ `expr match "$1" "[0-9][0-9]"*$` == 0 ]] #<==正则，匹配至少1位数字，以数字结尾
+    then
+        echo "$1 is not a num"
+    else
+        echo "$1 is a num"
+fi
+[root]# sh expr_match.sh 11
+11 is a num
+[root]# sh expr_match.sh Max
+Max is not a num
+[root]# sh expr_match.sh 313193454@qq.com
+313193454@qq.com is not a num
+
+9.通过expr判断文件扩展名是否符合要求
+[root]# cat expr1.sh 
+#!/bin/sh
+if expr "$1" : ".*\.pub" &>/dev/null #<== string:reg,expr正则的用法，后面的正则
+表达式表示匹配0或多个任意字符，然后“.”pub。
+    then 
+        echo "you are using $1"
+    else
+        echo "pls use *.pub file"
+fi
+
+[root]# sh expr1.sh id_dsa
+pls use *.pub file
+[root]# sh expr1.sh id_dsa.pub
+you are using id_dsa.pub
+
+10.计算字符串长度
+[root]# char="I am Max Zhao"
+[root]# expr length "$char"
+13
+[root]# echo ${#char}
+13
+[root]# echo ${char}|wc -L #<==wc 方法
+13
+[root]# echo ${char}|awk '{print length($0)}' #<==利用awk的length函数计算
+13
+
+11.利用expr的length函数计算字符串长度，并输出长度不大于6的字符串
+[root]# cat word_length.sh 
+#!/bin/sh
+for i in "$@"
+do
+if [ `expr length $i` -le 6 ]
+    then
+        echo $i
+fi
+done
+
+[root]# sh -x word_length.sh ABCDE ABCDEF ABCDEFG
++ for i in '"$@"'
+++ expr length ABCDE
++ '[' 5 -le 6 ']'
++ echo ABCDE
+ABCDE
++ for i in '"$@"'
+++ expr length ABCDEF
++ '[' 6 -le 6 ']'
++ echo ABCDEF
+ABCDEF
++ for i in '"$@"'
+++ expr length ABCDEFG
++ '[' 7 -le 6 ']'
