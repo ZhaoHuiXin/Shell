@@ -1,0 +1,13 @@
+declare(同typeset)命令的用法
+[root@momentsYun chapter05]# declare -i A=30 B=7 #<== -i参数可以将变量定义为整型
+[root@momentsYun chapter05]# A=A+B #<==因为已经声明是整型，因此可以直接进行运算
+[root@momentsYun chapter05]# echo $A
+37
+[root@momentsYun chapter05]# typeset C=600 D=5000
+[root@momentsYun chapter05]# C=C+D
+[root@momentsYun chapter05]# echo $C
+C+D   #<==可见必须得使用-i参数
+[root@momentsYun chapter05]# typeset -i C=600 D=5000
+[root@momentsYun chapter05]# C=C+D
+[root@momentsYun chapter05]# echo $C
+5600

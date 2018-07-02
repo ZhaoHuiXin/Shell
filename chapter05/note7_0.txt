@@ -1,0 +1,15 @@
+$[]符号运算示例:
+[root@momentsYun chapter05]# i=5
+[root@momentsYun chapter05]# i=$[i+6]
+[root@momentsYun chapter05]# echo $i
+11
+[root@momentsYun chapter05]# i=$(i+1)
+-bash: i+1: 未找到命令
+[root@momentsYun chapter05]# echo $[2*3]
+6
+[root@momentsYun chapter05]# echo $[2**3]
+8
+[root@momentsYun chapter05]# echo $[3/5]
+0
+[root@momentsYun chapter05]# echo $[3%5]
+3

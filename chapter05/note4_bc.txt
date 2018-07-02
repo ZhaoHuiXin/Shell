@@ -1,0 +1,34 @@
+bc命令的用法
+bc是unix/linux下的计算器，除了可以作为计算器使用，还可以作为命令行计算工具使用
+1.将bc作为计算器使用，输入bc，然后输入表达式即可
+2.将bc用在命令行下面实现运算功能：
+[root@momentsYun chapter05]# echo 3+5|bc
+8
+[root@momentsYun chapter05]# echo 3.3+5.5|bc
+8.8
+[root@momentsYun chapter05]# echo 8.8-5.5|bc
+3.3
+[root@momentsYun chapter05]# echo "scale=2;355/113"|bc #<==使用sacle=2保留2位小数
+3.14
+[root@momentsYun chapter05]# echo "scale=6;355/113"|bc
+3.141592
+[root@momentsYun chapter05]# i=5
+[root@momentsYun chapter05]# i=`echo $i+6|bc`#<==利用echo输出表达式。通过管道交给bc计算
+[root@momentsYun chapter05]# echo $i
+11
+
+案例，通过一条命令计算输出1+2+3...+10的表达式
+[root@momentsYun chapter05]# seq -s "+" 10 #<==seq是生成数字序列，-s指数字之间的分隔符
+1+2+3+4+5+6+7+8+9+10
+[root@momentsYun chapter05]# echo {1..10}|tr " " "+" #<=={1..10}是生成以空格为间隔的数字序列，并交给tr将空格替换为+号
+1+2+3+4+5+6+7+8+9+10
+[root@momentsYun chapter05]# echo `seq -s '+' 10`=`seq -s "+" 10|bc`
+1+2+3+4+5+6+7+8+9+10=55
+[root@momentsYun chapter05]# echo "`seq -s '+' 10`="$((`seq -s "+" 10`))
+1+2+3+4+5+6+7+8+9+10=55
+[root@momentsYun chapter05]# echo "`seq -s '+' 10`="$((`seq -s '+' 10`))
+1+2+3+4+5+6+7+8+9+10=55
+[root@momentsYun chapter05]# echo `seq -s '+' 10`=`seq -s '+' 10|bc`
+1+2+3+4+5+6+7+8+9+10=55
+[root@momentsYun chapter05]# echo `seq -s "+" 10`=`seq -s '+' 10|bc`
+1+2+3+4+5+6+7+8+9+10=55

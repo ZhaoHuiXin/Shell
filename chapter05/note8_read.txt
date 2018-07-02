@@ -1,0 +1,31 @@
+read命令基础：
+Shell变量除了可以直接赋值或脚本传参外，还可以使用read命令从标准输入中获得，read为bash内置命令，可以使用help read查看帮助
+语法格式：read [参数][变量名]
+常用参数：-p prompt：设置提示信息。  -t timeout：设置输入等待时间，单位默认为秒
+使用示例：
+[root@momentsYun chapter05]# read -t 3 -p "Pls input one num:" num #<==读入一个输入，赋值给num，注意num前需要有空格
+Pls input one num:[root@momentsYun chapter05]# #<==到了过期时间
+[root@momentsYun chapter05]# read -t 3 -p "Pls input one num:" num
+Pls input one num:199
+[root@momentsYun chapter05]# echo $num #<==输出199，相当于把199赋值给变量num
+199
+[root@momentsYun chapter05]# read -t 3 -p "Pls input two num:" n1 n2 
+#<==读入两个输入，注意以空格隔开，分别赋值给变量n1 n2，n1前后都需要有空格
+Pls input two num:1[root@momentsYun chapter05]# 1 2
+-bash: 1: 未找到命令
+[root@momentsYun chapter05]# read -t 3 -p "Pls input two num:" n1 n2
+Pls input two num:1 
+[root@momentsYun chapter05]# read -t 3 -p "Pls input two num:" n1 n2
+Pls input two num:1 2
+[root@momentsYun chapter05]# echo n1
+n1
+[root@momentsYun chapter05]# echo $n1
+1
+[root@momentsYun chapter05]# echo $n2
+2
+read的读入功能相当于交互式接受用户输入，然后赋值给变量。
+read -p功能可以使用echo和read来实现，如：
+echo -n "please input two number:"
+read n1 n2
+以上两句和下面命令相当（-t排除在外）
+read -t 5 -p "please input two number:" n1 n2
