@@ -29,3 +29,92 @@ echo -n "please input two number:"
 read n1 n2
 以上两句和下面命令相当（-t排除在外）
 read -t 5 -p "please input two number:" n1 n2
+
+read 示例：
+[root@momentsYun chapter05]# cat read_size.sh 
+#!/bin/bash
+read -t 15 -p "Pls input two numbers:" a b
+#no1
+[ ${#a} -le 0 ] &&{ #<==条件表达式，根据变量值得长度是否小于0判断第一个数是否为空
+	echo "the first num is null"
+	exit 1 
+ }
+[ ${#b} -le 0 ]&&{
+	echo "the second num is null"
+	exit 1
+}
+#no2
+expr $a + 1 &>/dev/null #<==利用expr特性判断a和b是否都是整数
+RETVAL_A=$?
+expr $b + 1 &>/dev/null
+RETVAL_B=$?
+if [ $RETVAL_A -ne 0 -o $RETVAL_B -ne 0 ];then
+	echo "one of the num is not int,pls input again."
+	exit 1
+fi
+#no3
+echo "a-b=$(($a-$b))"
+echo "a+b=$(($a+$b))"
+
+[root@momentsYun chapter05]# sh read_size.sh 
+Pls input two numbers:qq
+the second num is null
+[root@momentsYun chapter05]# sh read_size.sh 
+Pls input two numbers:qq dd
+one of the num is not int,pls input again.
+[root@momentsYun chapter05]# sh read_size.sh 
+Pls input two numbers:12 6
+a-b=6
+a+b=18
+
+3.改用读入脚本传参的方式实现
+[root@momentsYun chapter05]# cat read_size02.sh 
+#!/bin/bash
+a=$1
+b=$2
+Usage(){
+	echo "USAGE:sh $0 num1 num2"
+	exit 1
+}
+if [ $# -ne 2 ];then
+	Usage
+fi
+expr $a + 1 >/dev/null 2>&1
+[ $? -ne 0 ] && Usage
+expr $b + 0 >/dev/null 2>&1 #<==这个地方使用的加0，为了防止b为0而导致被除数为0
+[ $? -ne 0 ] && Usage
+#no3
+echo "a-b=$(($a-$b))"
+echo "a+b=$(($a+$b))"
+if [ $b -eq 0 ] #<==这个地方对b做了判断，防止被除数为0，算是保险，可能用不上
+	then 		
+		echo "your input does not allow to run."
+		echo "a/b =error"
+		echo "a%b =error"
+	else
+		echo "a/b =$(($a/$b))"
+		echo "%b =$(($a%$b))"
+fi
+
+[root@momentsYun chapter05]# sh read_size02.sh 
+USAGE:sh read_size02.sh num1 num2
+[root@momentsYun chapter05]# sh read_size02.sh  7 Max
+USAGE:sh read_size02.sh num1 num2
+[root@momentsYun chapter05]# sh read_size02.sh  7 3
+a-b=4
+a+b=10
+a/b =2
+%b =1
+下面示例为什么expr $b + 0 可以确保被除数不为0
+[root@momentsYun chapter05]# b=1 
+[root@momentsYun chapter05]# expr $b + 0 >/dev/null 2>&1
+[root@momentsYun chapter05]# echo $?
+0
+[root@momentsYun chapter05]# b=0
+[root@momentsYun chapter05]# expr $b + 0 >/dev/null 2>&1
+[root@momentsYun chapter05]# echo $?
+1
+[root@momentsYun chapter05]# b=2
+[root@momentsYun chapter05]# expr $b + 0 >/dev/null 2>&1
+[root@momentsYun chapter05]# echo $?
+0
