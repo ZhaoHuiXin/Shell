@@ -1,0 +1,65 @@
+逻辑操作符
+1.逻辑操作符：
+[]和test        [[]]和(())        
+  -a              &&            and与
+  -o              ||            or或
+  !               !             not，非
+注：
+  逻辑操作符前后的表达式是否成立，一般用真假来表示
+  !,中文意思是反，即与一个逻辑值相反的逻辑值
+  连接两含[]、test或[[]]的表达式可用&&或||
+
+2.逻辑操作符运算规则：
+  -a和&&的运算规则：只有逻辑操作符两端的表达式都成立时才为真；真(true)表示成立，对应
+的数字为1；假(false)表示不成立，对应的数字为0
+  
+3.示例：
+☁  chapter06 [master] ⚡  [ -f "$f1" && -f "$f2" ] && echo 1 || echo 0
+[: ']' expected  #<== []中不能使用&&,想在[]中使用&&可以写成如下格式
+0
+☁  chapter06 [master] ⚡  [ -f "$f1" ] && [ -f "$f2" ] && echo 1 || echo 0
+1
+同理，[[]]和(())中使用-a或-o也会报错
+
+4.小结：
+  -a和-o逻辑操作符号需要使用在[]中
+  &&和||逻辑操作符号可以使用于[[]]和(())中，也可以在外部连接多个[]
+  注意在[]和[[]]的两端及比较符号的两端必须要有空格，但是对于(())不需要
+
+5.示例
+#<==在network中搜索含有-a或-o的语句
+☁  chapter06 [master] ⚡  egrep -wn "\-a|\-o" /etc/init.d/network
+103:        if [ "$TYPE" = "xDSL"  -o  "$TYPE" = "Modem" ]; then
+117:        if [ "${DEVICE%%.*}" != "$DEVICE"  -o  "${DEVICE##vlan}" != "$DEVICE" ] ; then
+197:        if [ "$TYPE" = "xDSL"  -o  "$TYPE" = "Modem" ]; then
+202:        if [ "${DEVICE%%.*}" != "$DEVICE"  -o  "${DEVICE##vlan}" != "$DEVICE" ] ; then
+237:    echo $(/sbin/ip -o link show up | awk -F ": " '{ print $2 }')
+#<==在init.d文件夹下，遍历所有脚本找[[，找到了echo它
+☁  chapter06 [master] ⚡ for n in `ls /etc/init.d/*`;do egrep -wn "\[\[" $n&&echo$n;done
+50:    if [[ $route == *" via "* ]] ; then
+75:        if ! [[ "$SYSLOGADDR" =~ $IPv4_regex ]] && ! [[ "$SYSLOGADDR" =~ $IPv6_regex ]]; then
+80:            if [[ $? -eq 2 ]]; then
+84:            if [[ $? -ne 0 ]]; then
+#<==不echo也是同样的效果
+☁  chapter06 [master] ⚡  for n in `ls /etc/init.d/*`;do egrep -wn "\[\[" $n;done
+50:    if [[ $route == *" via "* ]] ; then
+75:        if ! [[ "$SYSLOGADDR" =~ $IPv4_regex ]] && ! [[ "$SYSLOGADDR" =~ $IPv6_regex ]]; then
+80:            if [[ $? -eq 2 ]]; then
+84:            if [[ $? -ne 0 ]]; then
+
+6.传入数字判断是否是1或2脚本：
+#!/bin/sh
+echo -n "pls input a char:" #<==打印提示字符串，-n表示不换行
+read var #<==读入用户输入，赋值给var
+[ "$var" == "1" ] &&{
+  echo 1
+  exit 0 #<==每个逻辑正确，则以返回值0退出脚本，从而避免执行脚本后面无用的代码
+}
+[ "$var" == "2" ] &&{
+  echo 2
+  exit 0
+}
+[ "$var" != "2" -a "$var" != "1" ]&&{
+  echo error
+  exit 2
+}
