@@ -1,0 +1,65 @@
+1.单分支结构：
+if <条件表达式>
+  then
+    指令
+fi
+
+if <条件表达式>; then
+  指令
+fi
+
+2.if嵌套
+if <条件表达式>
+  then
+    if <条件表达式>
+      then
+        指令
+    fi
+fi
+
+3.双分支结构
+if <条件表达式>
+  then
+    指令集1
+else
+    指令集2
+fi
+
+4.多分支结构
+if <条件表达式>
+  then
+    指令1
+elif  <条件表达式2>
+  then  
+    指令2
+else
+    指令3
+fi
+注意：多分支elif，每个elif都要带有then，最后结尾的else后面没有then
+
+4.shell脚本示例，如果系统内存低于100mb，就邮件报告管理员，并将脚本加入定时任务，
+每3分钟执行一次检查
+1）获取当前系统剩余内存值，命令如下：
+  free -m 
+  free -m|awk 'NR==2 {print $4}' 获取系统当前剩余内存的命令，单位MB
+2）配置邮件报警(可采用第三方邮件服务器)，这里使用163：
+  echo -e "set from=huixincoming@163.com smtp=smtp.163..com \nset smtp-auth-user=huixincoming@163.com smtp-auth-password=zhx52163 smtp-auth=login" >> /etc/mail.rc
+  以上命令配置/etc/mail.rc
+  # from=...为邮件地址 smtp=...为邮件服务器
+  # smtp-auth-user=...为用户名，smtp-auth-password=...为密码
+  # 测试邮件发送
+3）编写Shell脚本
+☁  chapter07 [master] ⚡  cat send_warning.sh
+#!/bin/sh
+FreeMem=`free -m|awk 'NR==2 {print $4}'`
+CHARS="Current memory is $FreeMem"
+if [ $FreeMem -lt 2000 ]
+  then
+    echo $CHARS|tee /tmp/messages.txt #<==屏幕输出提示，并写入文件
+    mail -s "`date +%F-%T` $CHARS" huixincoming@163.com </tmp/messages.txt
+fi  
+  #<==以日期和报警内容为标题，发送邮件报警
+
+
+
+
