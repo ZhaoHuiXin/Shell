@@ -1,0 +1,74 @@
+判断字符串是否为数字
+1.使用sed加正则表达式
+思路：删除一个字符串中的所有数字，看字符串的长度是否为0，如果不为0，则说明不是整数
+☁  chapter07 [master] ⚡  [ -n "`echo oldboy123|sed 's/[0-9]//g'`" ] && echo char|| echo int
+char
+☁  chapter07 [master] ⚡  [ -n "`echo 123|sed 's/[0-9]//g'`" ] && echo char|| echo int
+int
+☁  chapter07 [master] ⚡  [ -z "`echo 123|sed 's/[0-9]//g'`" ] && echo int || echo char
+int
+☁  chapter07 [master] ⚡  [ -z "`echo 123pliwsa|sed 's/[0-9]//g'`" ] && echo int || echo char
+char
+除了使用sed的替换外，还可以使用变量的子串替换等方法，如下：
+☁  chapter07 [master] ⚡  num=MaxZhao
+☁  chapter07 [master] ⚡  [ -z "`echo "${num//[0-9]/}"`" ]&& echo int || echo char
+char
+☁  chapter07 [master] ⚡  num=521
+☁  chapter07 [master] ⚡  [ -z "`echo "${num//[0-9]/}"`" ]&& echo int || echo char
+int
+
+2.变量的子串替换加正则表达式(特殊的判断思路)
+思路：如果num的长度不为0，并且把num中的非数字部分删除，然后再看结果是不是等于num本身，如果
+两者都成立，则num就是数字
+☁  chapter07 [master] ⚡  num=521
+☁  chapter07 [master] ⚡  [ -n "$num" -a "$num" = "${num//[^0-9]/}" ] && echo "it is num" || echo "it
+is not a num"
+it is num
+☁  chapter07 [master] ⚡  num=MaxZhao
+☁  chapter07 [master] ⚡  [ -n "$num" -a "$num" = "${num//[^0-9]/}" ] && echo "it is num" || echo "it
+is not a num"
+it is not a num
+
+3.通过expr计算判断
+☁  chapter07 [master] ⚡  expr lod + 1&>/dev/null
+☁  chapter07 [master] ⚡  echo $?
+2
+☁  chapter07 [master] ⚡  expr 123 + 1 &>/dev/null
+☁  chapter07 [master] ⚡  echo $?
+0
+☁  chapter07 [master] ⚡  expr 0 + 0 &>/dev/null
+☁  chapter07 [master] ⚡  echo $?
+1
+
+4.利用“=~”符号判断：
+☁  chapter07 [master] ⚡  [[ MaxZhao =~ ^[0-9]+$ ]] && echo int || echo char
+char
+☁  chapter07 [master] ⚡  [[ 123 =~ ^[0-9]+$ ]] && echo int || echo char
+int
+
+二、判断字符串长度是否为0：
+1.使用字符串表达式-z和-n的语法
+☁  chapter07 [master] ⚡  [ -z "oldboy" ] && echo 1 || echo 0
+0
+☁  chapter07 [master] ⚡  [ -n "oldboy" ] && echo 1 || echo 0
+1
+
+2.使用变量子串的语法：
+☁  chapter07 [master] ⚡  char=MaxZhao
+☁  chapter07 [master] ⚡  [ ${#char} -eq 0 ] && echo 1 || echo 0
+0
+
+3.使用wc的-L参数的判断语法：
+☁  chapter07 [master] ⚡  [ ` echo oldboy|wc -L ` -eq 0 ]&& echo 1 || echo 0
+0
+☁  chapter07 [master] ⚡  [ `echo oldboy|wc -L` -eq 0 ]&& echo 1 || echo 0
+0
+
+4.使用expr length函数判断的语法：
+☁  chapter07 [master] ⚡  [ `expr length "MaxZhao"` -eq 0 ] && echo 1|| echo 0
+0
+
+5.使用awk length函数判断的语法：
+☁  chapter07 [master] ⚡  [ `echo MaxZhao|awk '{print length}'` -eq 0 ] && echo 1 || echo 0
+0
+
