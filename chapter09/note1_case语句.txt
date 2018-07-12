@@ -1,0 +1,22 @@
+case 条件语句的语法格式为：
+case "变量" in
+  值 1)
+      指令...
+      ;;
+  值 2)
+      指令...
+      ;;
+  值 3)
+      指令...
+      ;;
+  * 其他)
+      指令....
+esac
+echo -e "\033[30m abcdefg \033[0m" 黑色
+echo -e "\033[31m abcdefg \033[0m" 红色
+echo -e "\033[32m abcdefg \033[0m" 绿色
+echo -e "\033[33m abcdefg \033[0m" 棕色
+echo -e "\033[34m abcdefg \033[0m" 蓝色
+echo -e "\033[35m abcdefg \033[0m" 洋红色
+echo -e "\033[36m abcdefg \033[0m" 蓝绿色
+echo -e "\033[37m abcdefg \033[0m" 白色
