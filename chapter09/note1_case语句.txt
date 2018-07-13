@@ -12,6 +12,8 @@ case "变量" in
   * 其他)
       指令....
 esac
+
+2.给字体加颜色
 echo -e "\033[30m abcdefg \033[0m" 黑色
 echo -e "\033[31m abcdefg \033[0m" 红色
 echo -e "\033[32m abcdefg \033[0m" 绿色
@@ -20,3 +22,15 @@ echo -e "\033[34m abcdefg \033[0m" 蓝色
 echo -e "\033[35m abcdefg \033[0m" 洋红色
 echo -e "\033[36m abcdefg \033[0m" 蓝绿色
 echo -e "\033[37m abcdefg \033[0m" 白色
+
+3.grep精确过滤单词的三种方法：
+☁  chapter09 [master] ⚡  cat /etc/openvpn_authfile.conf
+Max
+Zhao
+☁  chapter09 [master] ⚡  grep -w "Max" /etc/openvpn_authfile.conf
+Max
+☁  chapter09 [master] ⚡  grep "\bZhao\b" /etc/openvpn_authfile.conf
+Zhao
+☁  chapter09 [master] ⚡  grep "^moments" /etc/openvpn_authfile.conf
+☁  chapter09 [master] ⚡  grep "^Max" /etc/openvpn_authfile.conf
+Max
