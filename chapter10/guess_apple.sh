@@ -6,7 +6,7 @@ echo "当前苹果的价格是每斤$NUM元"
 echo "==========================="
 usleep 1000000
 clear
-echo '这苹果多钱一斤？i
+echo '这苹果多钱一斤？
       请猜0-60的数字'
 apple(){
         read -p "请输入你的价格： " PRICE
@@ -24,7 +24,7 @@ guess(){
           echo "猜对了，就是$NUM元"
           if [ $total -le 3 ];then
           echo "一共猜了${total}次，牛！"
-  elif [ $total -gt 3 -a $totala -le 6 ];then
+  elif [ $total -gt 3 -a $total -le 6 ];then
           echo "一共猜了$total次，次数有点多，加油"
   elif [ $total -gt 6 ]
   then
